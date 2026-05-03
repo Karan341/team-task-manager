@@ -7,26 +7,16 @@ const authMiddleware = require("./middleware/authMiddleware");
 const roleMiddleware = require("./middleware/roleMiddleware");
 const projectRoutes = require("./routes/projectRoutes");
 
-
-
 const connectDB = require("./config/db");
 
 const authRoutes = require("./routes/authRoutes");
 const taskRoutes = require("./routes/taskRoutes");
 
-
 const app = express();
 
-// CORS configuration for both development and production
-app.use(cors({
-  origin: [
-    'http://localhost:3000',
-    'https://team-task-managerr.netlify.app'
-  ],
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));
+// ✅ SIMPLE & SAFE CORS (best for deployment)
+app.use(cors());
+
 app.use(express.json());
 
 // DB connect
@@ -35,6 +25,7 @@ connectDB();
 app.use("/api/auth", authRoutes);
 app.use("/api/tasks", taskRoutes);
 app.use("/api/projects", projectRoutes);
+
 app.get("/api/protected", authMiddleware, (req, res) => {
   res.json({
     message: "Protected route accessed",
@@ -57,7 +48,6 @@ app.get(
 app.get("/", (req, res) => {
   res.send("API is running...");
 });
-
 
 const PORT = process.env.PORT || 5000;
 
