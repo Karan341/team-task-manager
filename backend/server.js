@@ -14,8 +14,27 @@ const taskRoutes = require("./routes/taskRoutes");
 
 const app = express();
 
-// ✅ SIMPLE & SAFE CORS (best for deployment)
-app.use(cors());
+// ✅ CORS whitelist for development and production
+const allowedOrigins = [
+  'http://localhost:3000',
+  'https://team-task-managerr.netlify.app',
+];
+
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) return callback(null, true);
+    callback(new Error(`CORS policy does not allow access from origin ${origin}`));
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+}));
+
+app.options('*', cors({
+  origin: allowedOrigins,
+  credentials: true,
+}));
 
 app.use(express.json());
 
