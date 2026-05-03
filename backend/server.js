@@ -20,21 +20,25 @@ const allowedOrigins = [
   'https://team-task-managerr.netlify.app',
 ];
 
-app.use(cors({
+const corsOptions = {
   origin: (origin, callback) => {
     if (!origin) return callback(null, true);
-    if (allowedOrigins.includes(origin)) return callback(null, true);
-    callback(new Error(`CORS policy does not allow access from origin ${origin}`));
+
+    const isAllowedNetlifyPreview = /https:\/\/[a-z0-9-]+--team-task-managerr\.netlify\.app$/;
+
+    if (allowedOrigins.includes(origin) || isAllowedNetlifyPreview.test(origin)) {
+      return callback(null, true);
+    }
+
+    return callback(new Error(`CORS policy does not allow access from origin ${origin}`));
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
-}));
+};
 
-app.options('*', cors({
-  origin: allowedOrigins,
-  credentials: true,
-}));
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
 
 app.use(express.json());
 
