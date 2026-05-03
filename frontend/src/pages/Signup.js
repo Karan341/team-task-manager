@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
+const API_URL = "https://team-task-manager-production-a813.up.railway.app";
 
 function Signup() {
   const [name, setName] = useState("");
@@ -12,7 +13,7 @@ function Signup() {
 
   const handleSignup = async () => {
     try {
-      await axios.post("http://localhost:5000/api/auth/signup", {
+      await axios.post(`${API_URL}/api/auth/signup`, {
         name,
         email,
         password,

@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import axios from "axios";
+const API_URL = "https://team-task-manager-production-a813.up.railway.app";
 
 function Dashboard() {
   const [tasks, setTasks] = useState([]);
@@ -11,7 +12,7 @@ function Dashboard() {
 
   const fetchTasks = useCallback(async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/tasks", {
+      const res = await axios.get(`${API_URL}/api/tasks`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setTasks(res.data);
@@ -27,7 +28,7 @@ function Dashboard() {
   const addTask = async () => {
     try {
       await axios.post(
-        "http://localhost:5000/api/tasks",
+        `${API_URL}/api/tasks`,
         { title, description },
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -44,7 +45,7 @@ function Dashboard() {
 
   const deleteTask = async (id) => {
     try {
-      await axios.delete(`http://localhost:5000/api/tasks/${id}`, {
+      await axios.delete(`${API_URL}/api/tasks/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       fetchTasks();
@@ -56,7 +57,7 @@ function Dashboard() {
   const updateTask = async (id, status) => {
     try {
       await axios.put(
-        `http://localhost:5000/api/tasks/${id}`,
+        `${API_URL}/api/tasks/${id}`,
         { status },
         {
           headers: { Authorization: `Bearer ${token}` },
