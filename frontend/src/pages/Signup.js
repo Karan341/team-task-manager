@@ -1,0 +1,57 @@
+import { useState } from "react";
+import axios from "axios";
+import { Link, useNavigate } from "react-router-dom";
+
+function Signup() {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [role, setRole] = useState("Member");
+
+  const navigate = useNavigate();
+
+  const handleSignup = async () => {
+    try {
+      await axios.post("http://localhost:5000/api/auth/signup", {
+        name,
+        email,
+        password,
+        role,
+      });
+
+      alert("Signup successful");
+      navigate("/");
+    } catch (error) {
+    // 👇 YAHAN ADD KARNA HAI
+    console.log(error.response?.data || error.message);
+    alert(error.response?.data?.message || error.response?.data?.error || "Signup failed");
+  }
+};
+
+  return (
+    <div className="auth-container">
+      <div className="auth-card">
+        <h2>Create Account</h2>
+
+        <input placeholder="Full name" onChange={(e) => setName(e.target.value)} />
+        <input type="email" placeholder="Email address" onChange={(e) => setEmail(e.target.value)} />
+        <input type="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)} />
+
+        <select onChange={(e) => setRole(e.target.value)}>
+          <option value="Member">Member</option>
+          <option value="Admin">Admin</option>
+        </select>
+
+        <button className="primary-btn" onClick={handleSignup}>
+          Signup
+        </button>
+
+        <p className="link-text">
+          Already have account? <Link to="/">Login</Link>
+        </p>
+      </div>
+    </div>
+  );
+}
+
+export default Signup;
