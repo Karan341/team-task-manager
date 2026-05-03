@@ -17,11 +17,17 @@ const taskRoutes = require("./routes/taskRoutes");
 
 const app = express();
 
-app.use(cors());
-
+// CORS configuration for both development and production
+app.use(cors({
+  origin: [
+    'http://localhost:3000',
+    'https://team-task-managerr.netlify.app'
+  ],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 app.use(express.json());
-
-
 
 // DB connect
 connectDB();
