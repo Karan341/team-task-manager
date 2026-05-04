@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 
-const API_URL = "https://team-task-manager-production-a813.up.railway.app";
+const API_URL = "https://team-task-manager-production-661a.up.railway.app";
 
 function Dashboard() {
   const [tasks, setTasks] = useState([]);
