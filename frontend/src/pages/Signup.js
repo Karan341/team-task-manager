@@ -12,18 +12,23 @@ function Signup() {
   const navigate = useNavigate();
 
   const handleSignup = async () => {
-    try {
-      await axios.post(`${API_URL}/api/auth/signup`, {
-        name,
-        email,
-        password,
-        role,
-      });
+  if (!name || !email || !password || !role) {
+    alert("Please fill all fields");
+    return;
+  }
 
-      alert("Signup successful");
-      navigate("/");
-    } catch (error) {
-    // 👇 YAHAN ADD KARNA HAI
+  try {
+    const res = await axios.post(`${API_URL}/api/auth/signup`, {
+      name,
+      email,
+      password,
+      role,
+    });
+
+    console.log(res.data);
+    alert("Signup successful");
+    navigate("/");
+  } catch (error) {
     console.log(error.response?.data || error.message);
     alert(error.response?.data?.message || error.response?.data?.error || "Signup failed");
   }
