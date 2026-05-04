@@ -7,6 +7,7 @@ function Dashboard() {
   const [tasks, setTasks] = useState([]);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [dueDate, setDueDate] = useState("");
 
   const token = localStorage.getItem("token");
   const user = JSON.parse(localStorage.getItem("user"));
@@ -28,8 +29,8 @@ function Dashboard() {
   }, [fetchTasks]);
 
   const addTask = async () => {
-    if (!title || !description) {
-      alert("Please fill title and description");
+    if (!title || !description || !dueDate) {
+      alert("Please fill title, description and due date");
       return;
     }
 
@@ -39,6 +40,7 @@ function Dashboard() {
         {
           title,
           description,
+          dueDate,
           assignedTo: user?._id,
         },
         {
@@ -48,6 +50,7 @@ function Dashboard() {
 
       setTitle("");
       setDescription("");
+      setDueDate("");
       fetchTasks();
     } catch (error) {
       console.error("Error adding task:", error.response?.data || error.message);
@@ -121,6 +124,12 @@ function Dashboard() {
           onChange={(e) => setDescription(e.target.value)}
         />
 
+        <input
+          type="date"
+          value={dueDate}
+          onChange={(e) => setDueDate(e.target.value)}
+        />
+
         <button className="primary-btn" onClick={addTask}>
           Add Task
         </button>
@@ -132,35 +141,65 @@ function Dashboard() {
         <p>No tasks yet</p>
       ) : (
         <div className="task-grid">
-          {tasks.map((task) => (
-            <div className="task-card" key={task._id}>
-              <span className="status">{task.status}</span>
+          {tasks.map((task) => {
+            const isOverdue =
+              task.dueDate &&
+              new Date(task.dueDate) < new Date() &&
+              task.status !== "Completed";
 
-              <h3>{task.title}</h3>
-              <p>{task.description}</p>
+            return (
+              <div className="task-card" key={task._id}>
+                <span className="status">{task.status}</span>
 
-              <p>
-                <strong>Assigned to:</strong>{" "}
-                {task.assignedTo?.name || "Not assigned"}
-              </p>
+                <h3>{task.title}</h3>
+                <p>{task.description}</p>
 
-              <p>
-                <strong>Created by:</strong>{" "}
-                {task.createdBy?.name || "Unknown"}
-              </p>
+                {isOverdue && (
+                  <p style={{ color: "red", fontWeight: "bold" }}>
+                    Overdue ⚠️
+                  </p>
+                )}
 
-              <button className="delete-btn" onClick={() => deleteTask(task._id)}>
-                Delete
-              </button>
+                <p>
+                  <strong>Assigned to:</strong>{" "}
+                  {task.assignedTo?.name || "Not assigned"}
+                </p>
 
-              <button
-                className="secondary-btn"
-                onClick={() => updateTask(task._id, "Completed")}
-              >
-                Mark Completed
-              </button>
-            </div>
-          ))}
+                <p>
+                  <strong>Created by:</strong>{" "}
+                  {task.createdBy?.name || "Unknown"}
+                </p>
+
+                <p>
+                  <strong>Assigned on:</strong>{" "}
+                  {task.createdAt
+                    ? new Date(task.createdAt).toLocaleDateString()
+                    : "N/A"}
+                </p>
+
+                <p>
+                  <strong>Due date:</strong>{" "}
+                  {task.dueDate
+                    ? new Date(task.dueDate).toLocaleDateString()
+                    : "N/A"}
+                </p>
+
+                <button
+                  className="delete-btn"
+                  onClick={() => deleteTask(task._id)}
+                >
+                  Delete
+                </button>
+
+                <button
+                  className="secondary-btn"
+                  onClick={() => updateTask(task._id, "Completed")}
+                >
+                  Mark Completed
+                </button>
+              </div>
+            );
+          })}
         </div>
       )}
     </div>
