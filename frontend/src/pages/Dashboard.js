@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import axios from "axios";
+
 const API_URL = "https://team-task-manager-production-a813.up.railway.app";
 
 function Dashboard() {
@@ -15,9 +16,10 @@ function Dashboard() {
       const res = await axios.get(`${API_URL}/api/tasks`, {
         headers: { Authorization: `Bearer ${token}` },
       });
+
       setTasks(res.data);
     } catch (error) {
-      console.error("Error fetching tasks:", error);
+      console.error("Error fetching tasks:", error.response?.data || error.message);
     }
   }, [token]);
 
@@ -26,10 +28,19 @@ function Dashboard() {
   }, [fetchTasks]);
 
   const addTask = async () => {
+    if (!title || !description) {
+      alert("Please fill title and description");
+      return;
+    }
+
     try {
       await axios.post(
         `${API_URL}/api/tasks`,
-        { title, description },
+        {
+          title,
+          description,
+          assignedTo: user?._id,
+        },
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -39,7 +50,7 @@ function Dashboard() {
       setDescription("");
       fetchTasks();
     } catch (error) {
-      console.error("Error adding task:", error);
+      console.error("Error adding task:", error.response?.data || error.message);
     }
   };
 
@@ -48,9 +59,10 @@ function Dashboard() {
       await axios.delete(`${API_URL}/api/tasks/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
+
       fetchTasks();
     } catch (error) {
-      console.error("Error deleting task:", error);
+      console.error("Error deleting task:", error.response?.data || error.message);
     }
   };
 
@@ -63,9 +75,10 @@ function Dashboard() {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
+
       fetchTasks();
     } catch (error) {
-      console.error("Error updating task:", error);
+      console.error("Error updating task:", error.response?.data || error.message);
     }
   };
 
@@ -74,9 +87,12 @@ function Dashboard() {
       <div className="dashboard-header">
         <div>
           <h2>Dashboard</h2>
-          <h3>Welcome {user?.name} ({user?.role})</h3>
+          <h3>
+            Welcome {user?.name} ({user?.role})
+          </h3>
           <p>Manage your team tasks easily</p>
         </div>
+
         <button
           className="delete-btn"
           onClick={() => {
@@ -110,7 +126,7 @@ function Dashboard() {
         </button>
       </div>
 
-      <h3>Your Tasks</h3>
+      <h3>{user?.role === "Admin" ? "All Tasks" : "My Tasks"}</h3>
 
       {tasks.length === 0 ? (
         <p>No tasks yet</p>
@@ -119,9 +135,19 @@ function Dashboard() {
           {tasks.map((task) => (
             <div className="task-card" key={task._id}>
               <span className="status">{task.status}</span>
+
               <h3>{task.title}</h3>
               <p>{task.description}</p>
-              <p>Assigned to: {task.assignedTo?.name}</p>
+
+              <p>
+                <strong>Assigned to:</strong>{" "}
+                {task.assignedTo?.name || "Not assigned"}
+              </p>
+
+              <p>
+                <strong>Created by:</strong>{" "}
+                {task.createdBy?.name || "Unknown"}
+              </p>
 
               <button className="delete-btn" onClick={() => deleteTask(task._id)}>
                 Delete
