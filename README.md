@@ -74,4 +74,41 @@ Each task displays:
 ```bash
 git clone https://github.com/Karan341/team-task-manager.git
 cd team-task-manager
+```
+## 2. Backend Setup
 
+```bash
+cd backend
+npm install
+npm start
+```
+Create a .env file inside the backend folder:
+```bash
+MONGO_URI=your_mongodb_connection_string
+JWT_SECRET=your_secret_key
+```
+## 3. Frontend Setup
+```bash
+cd frontend
+npm install
+npm start
+```
+## Future Improvements
+ - User dropdown for task assignment
+ - Project-based filtering
+ - Notifications system
+ - Improved UI/UX design
+   ```
+  ##Author
+  Karan
+   GitHub: https://github.com/Karan341
+  
+  
+   
+
+
+
+
+   
+
+   
